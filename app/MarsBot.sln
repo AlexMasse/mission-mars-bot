@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarsBot", "MarsBot\MarsBot.csproj", "{F0852380-E14F-49E7-A760-4B876083093B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0852380-E14F-49E7-A760-4B876083093B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0852380-E14F-49E7-A760-4B876083093B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0852380-E14F-49E7-A760-4B876083093B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0852380-E14F-49E7-A760-4B876083093B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7712717E-31CB-4DA6-9251-E1F2EF51AC98}
+	EndGlobalSection
+EndGlobal
