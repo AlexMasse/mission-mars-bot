@@ -123,12 +123,14 @@ namespace MarsBot.Dialogs
                 {
                     await context.PostAsync("Ooops! Something went wrong while I was saving your ticket. Please try again later.");
                 }
+
+                context.Call(new UserFeedbackRequestDialog(), this.ResumeAndEndDialogAsync);
             }
             else
             {
                 await context.PostAsync("Ok. The ticket was not created. You can start again if you want.");
+                context.Done<object>(null);
             }
-            context.Done<object>(null);
         }
 
         private AdaptiveCard CreateCard(int ticketId, string category, string severity, string description)
