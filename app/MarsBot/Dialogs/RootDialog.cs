@@ -32,8 +32,8 @@ namespace MarsBot.Dialogs
         [LuisIntent("Help")]
         public async Task Help(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("I'm the help desk bot and I can help you create a ticket.\n" +
-                                    "You can tell me things like _I need to reset my password_ or _I cannot print_.");
+            await context.PostAsync("I'm the help desk bot and I can help you create a ticket or explore the knowledge base.\n" +
+                                    "You can tell me things like _I need to reset my password_ or _explore hardware articles_.");
             context.Done<object>(null);
         }
 
@@ -48,6 +48,20 @@ namespace MarsBot.Dialogs
             this._description = result.Query;
 
             await this.EnsureTicket(context);
+        }
+
+        [LuisIntent("ExploreKnowledgeBase")]
+        public async Task ExploreCategory(IDialogContext context, LuisResult result)
+        {
+            result.TryFindEntity("category", out var categoryEntityRecommendation);
+            var category = ((List<object>)categoryEntityRecommendation?.Resolution["values"])?[0]?.ToString();
+
+            context.Call(new CategoryExplorerDialog(category, result.Query), this.ResumeAndEndDialogAsync);
+        }
+
+        private async Task ResumeAndEndDialogAsync(IDialogContext context, IAwaitable<object> argument)
+        {
+            context.Done<object>(null);
         }
 
         private async Task EnsureTicket(IDialogContext context)
