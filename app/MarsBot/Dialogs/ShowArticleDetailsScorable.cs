@@ -32,7 +32,7 @@ namespace MarsBot.Dialogs
             var connector = new ConnectorClient(new Uri(item.ServiceUrl));
             var reply = "Sorry, I could not find that article.";
 
-            var searchResult = await this._searchService.SearchByTitle(state.ToString());
+            var searchResult = await this._searchService.SearchByTitle(state);
             if (searchResult != null && searchResult.Value.Length != 0)
             {
                 reply = searchResult.Value[0].Text;

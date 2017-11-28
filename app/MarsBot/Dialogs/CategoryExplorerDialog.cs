@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using MarsBot.Services;
 using MarsBot.Utils;
+
 using Microsoft.Bot.Builder.Dialogs;
 
 namespace MarsBot.Dialogs
@@ -33,11 +35,7 @@ namespace MarsBot.Dialogs
                 var facetResult = await this._searchService.FetchFacets();
                 if (facetResult.Facets.Category.Length != 0)
                 {
-                    var categories = new List<string>();
-                    foreach (var category in facetResult.Facets.Category)
-                    {
-                        categories.Add($"{category.Value} ({category.Count})");
-                    }
+                    var categories = facetResult.Facets.Category.Select(category => $"{category.Value} ({category.Count})").ToList();
 
                     PromptDialog.Choice(context, this.AfterMenuSelection, categories, "Let\'s see if I can find something in the knowledge for you. Which category is your question about?");
                 }
@@ -66,6 +64,7 @@ namespace MarsBot.Dialogs
             await context.PostAsync($"These are some articles I\'ve found in the knowledge base for _'{this._category}'_, click **More details** to read the full article:");
 
             await CardUtil.ShowSearchResults(context, searchResult, $"Sorry, I could not find any results in the knowledge base for _'{this._category}'_");
+
             context.Done<object>(null);
         }
     }

@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using AdaptiveCards;
-
+using Autofac;
+using MarsBot.HandOff;
 using MarsBot.Utils;
 
+using Microsoft.Bot.Builder.ConnectorEx;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
+
+using Conversation = Microsoft.Bot.Builder.Dialogs.Conversation;
 
 namespace MarsBot.Dialogs
 {
@@ -59,6 +62,22 @@ namespace MarsBot.Dialogs
             context.Call(new CategoryExplorerDialog(category, result.Query), this.ResumeAndEndDialogAsync);
         }
 
+        [LuisIntent("HandOffToHuman")]
+        public async Task HandOff(IDialogContext context, LuisResult result)
+        {
+            var conversationReference = context.Activity.ToConversationReference();
+            var provider = Conversation.Container.Resolve<Provider>();
+
+            if (provider.QueueMe(conversationReference))
+            {
+                var waitingPeople = provider.Pending() > 1 ? $", there are { provider.Pending() - 1 } users waiting" : string.Empty;
+
+                await context.PostAsync($"Connecting you to the next available human agent... please wait{waitingPeople}.");
+            }
+
+            context.Done<object>(null);
+        }
+
         private async Task ResumeAndEndDialogAsync(IDialogContext context, IAwaitable<object> argument)
         {
             context.Done<object>(null);
@@ -68,7 +87,7 @@ namespace MarsBot.Dialogs
         {
             if (this._severity == null)
             {
-                var severities = new string[] { "high", "normal", "low" };
+                var severities = new[] { "High", "Normal", "Low" };
                 PromptDialog.Choice(context, this.SeverityMessageReceivedAsync, severities, "Which is the severity of this problem?");
             }
             else if (this._category == null)
@@ -114,7 +133,7 @@ namespace MarsBot.Dialogs
                         new Attachment
                         {
                             ContentType = "application/vnd.microsoft.card.adaptive",
-                            Content = CreateCard(ticketId, this._category, this._severity, this._description)
+                            Content = CardUtil.CreateTicketCard(ticketId, this._category, this._severity, this._description)
                         }
                     };
                     await context.PostAsync(message);
@@ -131,68 +150,6 @@ namespace MarsBot.Dialogs
                 await context.PostAsync("Ok. The ticket was not created. You can start again if you want.");
                 context.Done<object>(null);
             }
-        }
-
-        private AdaptiveCard CreateCard(int ticketId, string category, string severity, string description)
-        {
-            var card = new AdaptiveCard();
-
-            var headerBlock = new TextBlock()
-            {
-                Text = $"Ticket #{ticketId}",
-                Weight = TextWeight.Bolder,
-                Size = TextSize.Large,
-                Speak = $"<s>You've created a new Ticket #{ticketId}</s><s>We will contact you soon.</s>"
-            };
-
-            var columnsBlock = new ColumnSet()
-            {
-                Separation = SeparationStyle.Strong,
-                Columns = new List<Column>
-                {
-                    new Column
-                    {
-                        Size = "1",
-                        Items = new List<CardElement>
-                        {
-                            new FactSet
-                            {
-                                Facts = new List<AdaptiveCards.Fact>
-                                {
-                                    new AdaptiveCards.Fact("Severity:", severity),
-                                    new AdaptiveCards.Fact("Category:", category),
-                                }
-                            }
-                        }
-                    },
-                    new Column
-                    {
-                        Size = "auto",
-                        Items = new List<CardElement>
-                        {
-                            new Image
-                            {
-                                Url =
-                                    "https://raw.githubusercontent.com/GeekTrainer/help-desk-bot-lab/master/assets/botimages/head-smiling-medium.png",
-                                Size = ImageSize.Small,
-                                HorizontalAlignment = HorizontalAlignment.Right
-                            }
-                        }
-                    }
-                }
-            };
-
-            var descriptionBlock = new TextBlock
-            {
-                Text = description,
-                Wrap = true
-            };
-
-            card.Body.Add(headerBlock);
-            card.Body.Add(columnsBlock);
-            card.Body.Add(descriptionBlock);
-
-            return card;
         }
     }
 }

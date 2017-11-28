@@ -15,21 +15,19 @@ namespace MarsBot.Services
         {
             using (var httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri("https://westus.api.cognitive.microsoft.com/");
+                httpClient.BaseAddress = new Uri("https://eastus.api.cognitive.microsoft.com/");
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", WebConfigurationManager.AppSettings["TextAnalyticsApiKey"]);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var sentimentRequest = new SentimentRequest()
+                var sentimentRequest = new SentimentRequest
                 {
-                    Documents = new List<SentimentDocument>()
+                    Documents = new List<SentimentDocument>
                     {
                         new SentimentDocument(text)
                     }
                 };
 
-                var uri = "/text/analytics/v2.0/sentiment";
-
-                var response = await httpClient.PostAsJsonAsync<SentimentRequest>(uri, sentimentRequest);
+                var response = await httpClient.PostAsJsonAsync("/text/analytics/v2.0/sentiment", sentimentRequest);
                 var responseString = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TextAnalyticsResult>(responseString);
 

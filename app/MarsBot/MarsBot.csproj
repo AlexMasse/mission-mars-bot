@@ -117,6 +117,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
+    <Compile Include="Dialogs\AgentLoginScorable.cs" />
     <Compile Include="Dialogs\CategoryExplorerDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
     <Compile Include="Dialogs\ShowArticleDetailsScorable.cs" />
@@ -124,6 +125,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HandOff\AgentCommand.cs" />
+    <Compile Include="HandOff\AgentExtensions.cs" />
+    <Compile Include="HandOff\CommandScorable.cs" />
+    <Compile Include="HandOff\Conversation.cs" />
+    <Compile Include="HandOff\ConversationState.cs" />
+    <Compile Include="HandOff\Provider.cs" />
+    <Compile Include="HandOff\RouterScorable.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\FacetResult.cs" />
     <Compile Include="Model\SearchFacets.cs" />

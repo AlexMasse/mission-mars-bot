@@ -2,7 +2,9 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Configuration;
+
 using MarsBot.Model;
+
 using Newtonsoft.Json;
 
 namespace MarsBot.Services
@@ -18,6 +20,7 @@ namespace MarsBot.Services
             {
                 var nameQuery = $"{_queryString}$filter=category eq '{category}'";
                 var response = await httpClient.GetStringAsync(nameQuery);
+
                 return JsonConvert.DeserializeObject<SearchResult>(response);
             }
         }
@@ -28,6 +31,7 @@ namespace MarsBot.Services
             {
                 var facetQuery = $"{_queryString}facet=category";
                 var response = await httpClient.GetStringAsync(facetQuery);
+
                 return JsonConvert.DeserializeObject<FacetResult>(response);
             }
         }
